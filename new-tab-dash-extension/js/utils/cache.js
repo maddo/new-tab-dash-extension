@@ -44,7 +44,7 @@ export const updateCacheTimer = () => {
   }
 
   if (!hasValidCache || maxTimeLeft <= 0) {
-    updateTimerDisplay('Cache expired');
+    updateTimerDisplay('');
     return null;
   }
 
@@ -59,12 +59,16 @@ export const updateCacheTimer = () => {
 function updateTimerDisplay(text) {
   const timerElement = document.getElementById('cache-timer');
   if (timerElement) {
-    if (text === 'No cache' || text === 'Cache expired') {
+    if (text === 'No cache') {
       timerElement.textContent = `ttl ${text}`;
+      timerElement.style.fontStyle = 'italic';
+    } else if (text === '') {
+      timerElement.textContent = '';
+      timerElement.style.fontStyle = 'normal';
     } else {
       timerElement.textContent = `ttl ${text}`;
+      timerElement.style.fontStyle = 'italic';
     }
-    timerElement.style.fontStyle = 'italic';
   }
 }
 
