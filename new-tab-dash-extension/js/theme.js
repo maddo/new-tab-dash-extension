@@ -35,11 +35,4 @@ export async function initTheme() {
       option.classList.add('active');
     });
   }
-  
-  // Position the cache timer more appropriately when theme selector is present
-  const cacheTimer = document.getElementById('cache-timer');
-  if (cacheTimer) {
-    cacheTimer.style.marginLeft = '0';
-    cacheTimer.style.marginRight = 'auto';
-  }
 }

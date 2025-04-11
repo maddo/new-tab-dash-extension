@@ -18,9 +18,6 @@ export function initLinks() {
   // Display links
   renderLinks(links);
   
-  // Update the links count in the status bar
-  updateLinksCount(links.length);
-  
   // Set up event listeners
   setupLinkListeners();
   
@@ -41,17 +38,6 @@ function getLinks() {
  */
 function saveLinks(links) {
   localStorage.setItem('dashboardLinks', JSON.stringify(links));
-  updateLinksCount(links.length);
-}
-
-/**
- * Update the links count in the status bar
- */
-function updateLinksCount(count) {
-  const countElement = document.getElementById('links-count');
-  if (countElement) {
-    countElement.textContent = count;
-  }
 }
 
 /**
@@ -323,21 +309,13 @@ function createTextFallback(linkItem, title) {
  * Set up event listeners for links configuration
  */
 function setupLinkListeners() {
-  // Use just the status bar icon for config since we removed the header button
-  const statusConfigBtn = document.getElementById('links-status');
-  const configModalBtn = document.getElementById('links-config');
+  // Use the configuration button in the links section header
+  const configBtn = document.getElementById('links-config-btn');
   
-  if (statusConfigBtn) {
-    statusConfigBtn.addEventListener('click', (e) => {
+  if (configBtn) {
+    configBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      showLinksConfigModal();
-    });
-  }
-  
-  if (configModalBtn) {
-    configModalBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation(); // Prevent the parent tooltip click from being triggered
+      e.stopPropagation(); // Prevent section collapse
       showLinksConfigModal();
     });
   }

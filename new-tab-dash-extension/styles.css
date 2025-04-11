@@ -143,6 +143,24 @@ body {
   transition: transform 0.2s ease;
 }
 
+.config-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.config-btn:hover {
+  color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .collapsed .toggle-btn {
   transform: rotate(-90deg);
 }
@@ -649,6 +667,10 @@ input {
   z-index: 100;
 }
 
+.status-spacer {
+  flex: 1;
+}
+
 .status-left, .status-right {
   display: flex;
   align-items: center;
@@ -799,6 +821,10 @@ input {
   font-size: 12px;
   color: var(--text-secondary);
   cursor: pointer;
+  margin-right: 8px;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
 }
 
 #cache-timer:hover {
@@ -1029,9 +1055,10 @@ input {
 
 /* Theme Selector Styles */
 #theme-status {
-  margin-left: auto;
+  margin-left: 0;
   color: var(--accent-color);
   position: relative;
+  z-index: 2;
 }
 
 #theme-status::before {
@@ -1039,8 +1066,8 @@ input {
   position: absolute;
   top: -20px;
   bottom: -20px;
-  left: -50px;
-  right: -50px;
+  left: -8px;
+  right: -8px;
   z-index: -1;
 }
 

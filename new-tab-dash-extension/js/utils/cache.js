@@ -59,7 +59,12 @@ export const updateCacheTimer = () => {
 function updateTimerDisplay(text) {
   const timerElement = document.getElementById('cache-timer');
   if (timerElement) {
-    timerElement.textContent = text;
+    if (text === 'No cache' || text === 'Cache expired') {
+      timerElement.textContent = `ttl ${text}`;
+    } else {
+      timerElement.textContent = `ttl ${text}`;
+    }
+    timerElement.style.fontStyle = 'italic';
   }
 }
 
@@ -76,8 +81,14 @@ export const initializeCacheTimer = () => {
       // Set loading status indicators
       const githubStatus = document.getElementById('github-status');
       const jiraStatus = document.getElementById('jira-status');
-      if (githubStatus) githubStatus.className = 'connection-status status-loading';
-      if (jiraStatus) jiraStatus.className = 'connection-status status-loading';
+      if (githubStatus) {
+        githubStatus.classList.remove('status-connected', 'status-error');
+        githubStatus.classList.add('status-loading');
+      }
+      if (jiraStatus) {
+        jiraStatus.classList.remove('status-connected', 'status-error');
+        jiraStatus.classList.add('status-loading');
+      }
       
       // Clear cache and trigger refresh
       clearAllCache();
@@ -86,20 +97,32 @@ export const initializeCacheTimer = () => {
       if (window.fetchGitHubPRs) {
         window.fetchGitHubPRs()
           .then(() => {
-            if (githubStatus) githubStatus.className = 'connection-status status-connected';
+            if (githubStatus) {
+              githubStatus.classList.remove('status-loading', 'status-error');
+              githubStatus.classList.add('status-connected');
+            }
           })
           .catch(() => {
-            if (githubStatus) githubStatus.className = 'connection-status status-error';
+            if (githubStatus) {
+              githubStatus.classList.remove('status-loading', 'status-connected');
+              githubStatus.classList.add('status-error');
+            }
           });
       }
       
       if (window.fetchJiraTickets) {
         window.fetchJiraTickets()
           .then(() => {
-            if (jiraStatus) jiraStatus.className = 'connection-status status-connected';
+            if (jiraStatus) {
+              jiraStatus.classList.remove('status-loading', 'status-error');
+              jiraStatus.classList.add('status-connected');
+            }
           })
           .catch(() => {
-            if (jiraStatus) jiraStatus.className = 'connection-status status-error';
+            if (jiraStatus) {
+              jiraStatus.classList.remove('status-loading', 'status-connected');
+              jiraStatus.classList.add('status-error');
+            }
           });
       }
     });
