@@ -87,11 +87,13 @@ export const initializeCacheTimer = () => {
       const jiraStatus = document.getElementById('jira-status');
       if (githubStatus) {
         githubStatus.classList.remove('status-connected', 'status-error');
-        githubStatus.classList.add('status-loading');
+        githubStatus.className = 'status-icon';
+        githubStatus.style.color = 'var(--warning-color)';
       }
       if (jiraStatus) {
         jiraStatus.classList.remove('status-connected', 'status-error');
-        jiraStatus.classList.add('status-loading');
+        jiraStatus.className = 'status-icon';
+        jiraStatus.style.color = 'var(--warning-color)';
       }
       
       // Clear cache and trigger refresh
@@ -102,13 +104,15 @@ export const initializeCacheTimer = () => {
         window.fetchGitHubPRs()
           .then(() => {
             if (githubStatus) {
-              githubStatus.classList.remove('status-loading', 'status-error');
+              githubStatus.style.color = '';
+              githubStatus.classList.remove('status-error');
               githubStatus.classList.add('status-connected');
             }
           })
           .catch(() => {
             if (githubStatus) {
-              githubStatus.classList.remove('status-loading', 'status-connected');
+              githubStatus.style.color = '';
+              githubStatus.classList.remove('status-connected');
               githubStatus.classList.add('status-error');
             }
           });
@@ -118,13 +122,15 @@ export const initializeCacheTimer = () => {
         window.fetchJiraTickets()
           .then(() => {
             if (jiraStatus) {
-              jiraStatus.classList.remove('status-loading', 'status-error');
+              jiraStatus.style.color = '';
+              jiraStatus.classList.remove('status-error');
               jiraStatus.classList.add('status-connected');
             }
           })
           .catch(() => {
             if (jiraStatus) {
-              jiraStatus.classList.remove('status-loading', 'status-connected');
+              jiraStatus.style.color = '';
+              jiraStatus.classList.remove('status-connected');
               jiraStatus.classList.add('status-error');
             }
           });
