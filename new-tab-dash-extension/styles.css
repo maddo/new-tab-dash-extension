@@ -1,0 +1,1255 @@
+/* ==========================================================================
+   Base Styles
+   ========================================================================== */
+:root {
+  /* Base Colors */
+  --background-color: #000000;
+  --panel-bg: #1a2331;
+  --text-color: #ffffff;
+  --text-secondary: #a0a0a0;
+  --accent-color: #4a90e2;
+  --accent-light: #64a0e8;
+  --accent-dark: #3570b2;
+  --divider-color: rgba(255, 255, 255, 0.2);
+  
+  /* Status Colors */
+  --github-color: #ffffff;
+  --jira-color: #0052CC; 
+  --error-color: #ff6b6b;
+  --success-color: #66bb6a;
+  --warning-color: #ffb74d;
+  
+  /* UI Colors */
+  --hover-bg: rgba(255, 255, 255, 0.1);
+  --status-bar-bg: rgba(0, 0, 0, 0.8);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --text-primary: var(--text-color);
+  
+  /* Priority Colors */
+  --p1-color: #8BC34A;
+  --p2-color: #4CAF50;
+  
+  /* Sizing and Spacing */
+  --border-radius: 6px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  
+  /* Links grid */
+  --link-size: 48px;
+  --links-gap: 16px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.5;
+  padding: var(--spacing-lg);
+  min-height: 100vh;
+}
+
+/* Page Title with icon */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2vh;
+  margin-top: 2vh;
+}
+
+.page-icon {
+  margin-right: 8px;
+  color: #f1c21b; /* Yellow color from the icon */
+}
+
+.page-title {
+  color: var(--accent-color);
+  font-size: 1.4rem;
+  opacity: 0.7;
+  margin: 0;
+  font-weight: normal;
+}
+
+/* ==========================================================================
+   Dashboard Styles
+   ========================================================================== */
+.dashboard {
+  max-width: 600px;
+  margin: 10vh auto;
+  background: var(--panel-bg);
+  border-radius: var(--border-radius);
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  position: relative;
+  border: 1px solid var(--divider-color);
+}
+
+/* Service Sections */
+.service-section {
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.service-section + .service-section {
+  margin-top: 0;
+  border-top: 1px solid var(--divider-color);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: 1px solid var(--divider-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.section-header:hover {
+  background-color: var(--hover-bg);
+}
+
+.section-header h3 {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.section-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.toggle-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease;
+}
+
+.collapsed .toggle-btn {
+  transform: rotate(-90deg);
+}
+
+.section-content {
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: all 0.3s ease;
+}
+
+.collapsed .section-content {
+  display: none;
+}
+
+.jira-tickets-count {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-bottom: var(--spacing-sm);
+}
+
+.jira-tickets-count a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.jira-tickets-count a:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+.item-count {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: normal;
+}
+
+/* Buttons */
+.config-btn,
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+}
+
+.config-btn:hover,
+.icon-btn:hover {
+  color: var(--accent-color);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Status Indicators */
+.connection-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+#github-status {
+  color: var(--github-color);
+}
+
+#jira-status {
+  color: var(--jira-color);
+}
+
+.status-connected {
+  color: var(--success-color);
+}
+
+.status-error {
+  color: var(--error-color);
+}
+
+.status-loading {
+  color: var(--warning-color);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+/* GitHub Quick Links */
+.github-quicklinks {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+.gh-quicklink {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.gh-quicklink-count {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.gh-quicklink-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-left: var(--spacing-xs);
+}
+
+/* GitHub PR Styles */
+.pr-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.pr-section h3 {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+}
+
+.pr-item {
+  display: flex;
+  position: relative;
+  margin-bottom: var(--spacing-xs);
+  padding: var(--spacing-xs) 0;
+  border-left: 4px solid var(--accent-color);
+  padding-left: var(--spacing-sm);
+}
+
+/* Removed bullet point */
+
+.pr-title {
+  flex: 1;
+  overflow: hidden;
+  padding-right: var(--spacing-md);
+}
+
+.pr-repo {
+  display: inline-block;
+  color: var(--accent-color);
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-right: var(--spacing-sm);
+}
+
+.pr-link {
+  color: var(--text-color);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  max-width: calc(100% - 80px);
+  vertical-align: bottom;
+}
+
+.pr-link:hover {
+  text-decoration: underline;
+  color: var(--accent-light);
+}
+
+.pr-age {
+  position: absolute;
+  right: 0;
+  font-size: 0.75rem;
+  padding: 2px 4px;
+  border-radius: 3px;
+  min-width: 30px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.pr-age-new {
+  color: var(--success-color);
+}
+
+.pr-age-recent {
+  color: var(--warning-color);
+}
+
+.pr-age-old {
+  color: var(--error-color);
+}
+
+/* Jira Styles */
+.jira-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.jira-ticket {
+  display: flex;
+  position: relative;
+  align-items: flex-start;
+  padding: var(--spacing-xs) 0;
+  margin-bottom: var(--spacing-xs);
+  border-left: 4px solid var(--p2-color);
+  padding-left: var(--spacing-sm);
+}
+
+/* Removed bullet point */
+
+/* Priority-based border colors */
+.jira-ticket.priority-p1 {
+  border-left-color: var(--p1-color);
+}
+
+.jira-ticket.priority-p1::before {
+  background-color: var(--p1-color);
+}
+
+.jira-key {
+  min-width: 80px;
+  font-size: 0.8rem;
+  color: var(--accent-color);
+  font-weight: 400;
+  margin-right: 2px;
+}
+
+.jira-title {
+  flex: 1;
+  font-size: 0.9rem;
+  margin-top: var(--spacing-xs);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  padding-right: 110px;
+}
+
+.jira-title a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.jira-title a:hover {
+  text-decoration: underline;
+  color: var(--accent-light);
+}
+
+.jira-meta {
+  position: absolute;
+  right: 40px;
+  top: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.jira-priority {
+  font-size: 0.7rem;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: var(--p2-color);
+  min-width: 30px;
+  text-align: center;
+  margin-right: var(--spacing-xs);
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.priority-p1 {
+  color: var(--p1-color);
+}
+
+.priority-p2 {
+  color: var(--p2-color);
+}
+
+.jira-status {
+  font-size: 0.7rem;
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.status-to-do, .status-open {
+  color: #bbbbbb;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.status-in-progress {
+  color: #2196f3;
+  background-color: rgba(33, 150, 243, 0.1);
+}
+
+.status-in-review {
+  color: #9c27b0;
+  background-color: rgba(156, 39, 176, 0.1);
+}
+
+.status-blocked {
+  color: #ff5722;
+  background-color: rgba(255, 87, 34, 0.1);
+}
+
+.jira-age {
+  position: absolute;
+  right: 0;
+  top: var(--spacing-xs);
+  font-size: 0.7rem;
+  padding: 1px 3px;
+  min-width: 30px;
+  text-align: right;
+  color: var(--error-color);
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.age-today {
+  color: var(--success-color);
+}
+
+.age-recent {
+  color: var(--warning-color);
+}
+
+.age-old {
+  color: var(--error-color);
+}
+
+.age-very-old {
+  color: #e91e63;
+}
+
+/* Status Messages */
+.setup-message {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.setup-link {
+  display: inline-block;
+  padding: 5px 15px;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.setup-link:hover {
+  opacity: 0.9;
+}
+
+.error {
+  color: var(--error-color);
+  text-align: center;
+  padding: var(--spacing-lg);
+}
+
+.loading {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--accent-color);
+  font-style: italic;
+}
+
+.no-items {
+  text-align: center;
+  padding: var(--spacing-lg);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.load-more-btn {
+  display: block;
+  margin: var(--spacing-md) auto;
+  padding: var(--spacing-xs) var(--spacing-lg);
+  background-color: rgba(0, 0, 0, 0.3);
+  color: var(--text-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.load-more-btn:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: var(--accent-color);
+}
+
+.load-more-btn:active {
+  transform: translateY(1px);
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 100;
+}
+
+.modal-content {
+  background: var(--background-color);
+  margin: 15% auto;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius);
+  max-width: 500px;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+  position: absolute;
+  right: var(--spacing-lg);
+  top: var(--spacing-md);
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.close:hover {
+  color: var(--accent-color);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-lg);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  color: var(--accent-color);
+}
+
+input {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--divider-color);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+}
+
+.help-text {
+  margin-top: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.save-button {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  display: block;
+  margin-top: var(--spacing-lg);
+}
+
+.save-button:hover {
+  opacity: 0.9;
+}
+
+/* Status Bar */
+.dashboard {
+  position: relative;
+}
+
+#status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 8px 16px;
+  background: var(--status-bar-bg);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--border-color);
+  overflow: visible;
+  z-index: 100;
+}
+
+.status-left, .status-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.status-icon:hover {
+  background: var(--hover-bg);
+  transform: scale(1.1);
+}
+
+/* Tooltip styles */
+.status-tooltip {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--panel-bg);
+  border: 1px solid var(--divider-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+  width: 200px;
+  color: var(--text-color);
+  font-size: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+  z-index: 1000;
+  text-align: left;
+  pointer-events: none;
+  max-width: 90vw;
+}
+
+/* Prevent tooltip overflow */
+#github-status .status-tooltip {
+  left: 0;
+  transform: translateX(0);
+}
+
+#jira-status .status-tooltip {
+  left: 0;
+  transform: translateX(0);
+}
+
+#links-status .status-tooltip {
+  left: 0;
+  transform: translateX(0);
+}
+
+.status-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--panel-bg);
+}
+
+#github-status .status-tooltip::after {
+  left: 12px;
+  transform: translateX(0);
+}
+
+#jira-status .status-tooltip::after {
+  left: 12px;
+  transform: translateX(0);
+}
+
+#links-status .status-tooltip::after {
+  left: 12px;
+  transform: translateX(0);
+}
+
+#theme-status .status-tooltip::after {
+  left: auto;
+  right: 12px;
+  transform: translateX(0);
+}
+
+.status-icon:hover .status-tooltip,
+.status-tooltip:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Fix gap between icon and tooltip */
+.status-icon::after {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  z-index: 999;
+}
+
+.tooltip-item {
+  margin-bottom: var(--spacing-xs);
+}
+
+.tooltip-item strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.tooltip-clear {
+  display: block;
+  text-align: center;
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: rgba(255, 87, 34, 0.2);
+  color: #ff5722;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.tooltip-clear:hover {
+  background-color: rgba(255, 87, 34, 0.4);
+}
+
+.status-icon.status-connected {
+  color: var(--success-color);
+}
+
+#cache-timer {
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+#cache-timer:hover {
+  color: var(--text-primary);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  body {
+    padding: var(--spacing-md);
+  }
+  
+  .jira-ticket {
+    flex-wrap: wrap;
+  }
+  
+  .jira-key {
+    min-width: 70px;
+  }
+  
+  .jira-title {
+    order: 3;
+    width: 100%;
+    margin-top: var(--spacing-xs);
+  }
+  
+  .jira-meta {
+    order: 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .section-header h3 {
+    font-size: 1rem;
+  }
+  
+  .status-tooltip {
+    bottom: 40px;
+    width: 180px;
+  }
+  
+  #status-bar {
+    padding: 10px;
+  }
+  
+  .status-icon {
+    margin-right: 5px;
+  }
+}
+
+/* Themes */
+.theme-dark {
+  --background-color: #121212;
+}
+
+.theme-ocean {
+  --background-color: #023047;
+  --accent-color: #219ebc;
+}
+
+.theme-twilight {
+  --background-color: #2b2d42;
+  --accent-color: #d90429;
+}
+
+/* ==========================================================================
+   Links Section Styles
+   ========================================================================== */
+.links-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--links-gap);
+  padding: var(--spacing-md) 0;
+}
+
+.link-item {
+  width: var(--link-size);
+  height: var(--link-size);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  position: relative;
+}
+
+.link-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--link-size);
+  margin-bottom: var(--spacing-md);
+}
+
+.link-item:hover {
+  transform: scale(1.05);
+  background-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.link-name {
+  font-size: 9px;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 4px;
+}
+
+.link-favicon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+  background-color: transparent;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  padding: 4px;
+  box-sizing: content-box;
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%),
+                    linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+}
+
+.link-item:hover .link-favicon {
+  transform: scale(1.05);
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+/* Fix for broken image icons */
+.link-favicon:not([src]), 
+.link-favicon[src=""], 
+.link-favicon:-moz-broken, 
+.link-favicon:not([src=""]):not([src]):not([src^="data"]):not([src^="http"]):not([src^="https"]) {
+  display: none;
+}
+
+/* Links Configuration Form */
+.links-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+#links-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.link-form-item {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+}
+
+.link-title, .link-url {
+  flex: 1;
+  min-width: 0;
+}
+
+.remove-link-btn {
+  background: none;
+  border: none;
+  color: var(--error-color);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.remove-link-btn:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+#links-status {
+  color: var(--accent-color);
+}
+
+.link-text-fallback {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.link-item:hover .link-text-fallback {
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Theme Selector Styles */
+#theme-status {
+  margin-left: auto;
+  color: var(--accent-color);
+  position: relative;
+}
+
+#theme-status::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  bottom: -20px;
+  left: -50px;
+  right: -50px;
+  z-index: -1;
+}
+
+.theme-selector-tooltip {
+  min-width: 300px;
+  left: auto;
+  right: 0;
+  padding: 10px;
+  bottom: 40px;
+  transform: translateX(0);
+}
+
+/* Create an invisible bridge between icon and tooltip */
+#theme-status .status-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  background: transparent;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.theme-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  color: var(--text-color);
+}
+
+.theme-option:hover {
+  background-color: var(--hover-bg);
+}
+
+.theme-option.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  outline: 1px solid var(--accent-color);
+}
+
+.theme-preview {
+  width: 60px;
+  height: 40px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.dark-preview {
+  background-color: #121212;
+}
+
+.ocean-preview {
+  background-color: #023047;
+}
+
+.twilight-preview {
+  background-color: #2b2d42;
+}
+
+.light-preview {
+  background-color: #f8f9fa;
+}
+
+.theme-preview::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 44px;
+  height: 6px;
+  border-radius: 3px;
+}
+
+.dark-preview::after {
+  background-color: #4a90e2;
+}
+
+.ocean-preview::after {
+  background-color: #219ebc;
+}
+
+.twilight-preview::after {
+  background-color: #d90429;
+}
+
+.light-preview::after {
+  background-color: #4a90e2;
+}
+
+.sunset-preview::after {
+  background-color: #ff6b6b;
+}
+
+.cyberpunk-preview::after {
+  background-color: #00ff66;
+}
+
+.sunrise-preview::after {
+  background-color: #e9a87c;
+}
+
+.windbreaker-preview::after {
+  background-color: #ff71e9;
+}
+
+.pastels-preview::after {
+  background-color: #a8e6cf;
+}
+
+/* Theme definitions */
+.theme-dark {
+  --background-color: #121212;
+  --panel-bg: #1a2331;
+  --accent-color: #4a90e2;
+}
+
+.theme-ocean {
+  --background-color: #023047;
+  --panel-bg: #0c3b58;
+  --accent-color: #219ebc;
+}
+
+.theme-twilight {
+  --background-color: #2b2d42;
+  --panel-bg: #3a3d56;
+  --accent-color: #d90429;
+}
+
+.theme-light {
+  --background-color: #f8f9fa;
+  --panel-bg: #ffffff;
+  --text-color: #212529;
+  --text-secondary: #6c757d;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --status-bar-bg: rgba(248, 249, 250, 0.9);
+  --divider-color: rgba(0, 0, 0, 0.1);
+  --hover-bg: rgba(0, 0, 0, 0.05);
+}
+
+.theme-sunset {
+  --background-color: #1c1a26;
+  --panel-bg: #272336;
+  --accent-color: #ff6b6b;
+  --text-color: #f8f9fa;
+  --text-secondary: #cbd1d8;
+  --border-color: rgba(255, 107, 107, 0.2);
+  --status-bar-bg: rgba(28, 26, 38, 0.9);
+  --divider-color: rgba(255, 107, 107, 0.2);
+  --hover-bg: rgba(255, 107, 107, 0.1);
+}
+
+.theme-cyberpunk {
+  --background-color: #000000;
+  --panel-bg: #0a0a0a;
+  --accent-color: #00ff66;
+  --text-color: #ffffff;
+  --text-secondary: #00cc99;
+  --border-color: rgba(0, 255, 102, 0.4);
+  --status-bar-bg: rgba(0, 0, 0, 0.9);
+  --divider-color: rgba(0, 255, 102, 0.3);
+  --hover-bg: rgba(0, 255, 102, 0.15);
+}
+
+.theme-sunrise {
+  --background-color: #2a3d45;
+  --panel-bg: #3a7765;
+  --accent-color: #e9a87c;
+  --text-color: #ffffff;
+  --text-secondary: #e6f0ed;
+  --border-color: rgba(233, 168, 124, 0.4);
+  --status-bar-bg: rgba(42, 61, 69, 0.9);
+  --divider-color: rgba(233, 168, 124, 0.3);
+  --hover-bg: rgba(233, 168, 124, 0.15);
+}
+
+.theme-windbreaker {
+  --background-color: #081c41;
+  --panel-bg: #073b4c;
+  --accent-color: #ff71e9;
+  --text-color: #ffffff;
+  --text-secondary: #06d6a0;
+  --border-color: rgba(255, 113, 233, 0.3);
+  --status-bar-bg: rgba(8, 28, 65, 0.9);
+  --divider-color: rgba(245, 34, 141, 0.2);
+  --hover-bg: rgba(255, 113, 233, 0.1);
+}
+
+.theme-pastels {
+  --background-color: #ffd5e5;
+  --panel-bg: #f9f9f9;
+  --accent-color: #60c5a8;
+  --text-color: #222222;
+  --text-secondary: #555555;
+  --border-color: rgba(96, 197, 168, 0.5);
+  --status-bar-bg: rgba(255, 213, 229, 0.9);
+  --divider-color: rgba(96, 197, 168, 0.4);
+  --hover-bg: rgba(96, 197, 168, 0.25);
+}

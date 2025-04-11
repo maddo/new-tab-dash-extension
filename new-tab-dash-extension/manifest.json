@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "New Tab Dash",
+  "version": "1.0",
+  "description": "A customizable dashboard for your new tab page with GitHub and Jira integration",
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval' http://localhost:* http://127.0.0.1:*; object-src 'self'"
+  },
+  "web_accessible_resources": [{
+    "resources": [
+      "styles.css",
+      "js/*",
+      "icons/*"
+    ],
+    "matches": ["<all_urls>"]
+  }],
+  "permissions": [
+    "storage",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "https://*.atlassian.net/*",
+    "https://api.github.com/*"
+  ],
+  "web_accessible_resources": [{
+    "resources": [
+      "styles.css",
+      "js/*",
+      "icons/*",
+      "newtab.html"
+    ],
+    "matches": ["<all_urls>"]
+  }],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+} 

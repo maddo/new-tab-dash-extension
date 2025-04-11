@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab Dash</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- SVG definitions for reuse -->
+    <svg width="0" height="0" style="position: absolute;">
+        <symbol id="location-pin-icon" viewBox="0 0 24 24" fill="none">
+            <path d="M20 10C20 14.4183 12 22 12 22C12 22 4 14.4183 4 10C4 5.58172 7.58172 2 12 2C16.4183 2 20 5.58172 20 10Z" stroke="currentColor" stroke-width="1.2"></path>
+            <path d="M12 11C12.5523 11 13 10.5523 13 10C13 9.44772 12.5523 9 12 9C11.4477 9 11 9.44772 11 10C11 10.5523 11.4477 11 12 11Z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path>
+        </symbol>
+    </svg>
+</head>
+<body class="theme-dark">
+    <!-- Page title with icon -->
+    <header class="page-header">
+        <svg class="page-icon" width="24" height="24">
+            <use href="#location-pin-icon" />
+        </svg>
+        <h1 class="page-title">new tab dash</h1>
+    </header>
+
+    <div class="dashboard">
+        <!-- Links Section -->
+        <div class="service-section" id="links-section">
+            <div class="section-header">
+                <h3>Links</h3>
+                <div class="section-controls">
+                    <button id="links-toggle-btn" class="toggle-btn" title="Toggle section">▼</button>
+                </div>
+            </div>
+            <div id="links-content" class="section-content">
+                <div class="links-container">
+                    <!-- Links will be dynamically loaded here -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- GitHub Section -->
+        <div class="service-section" id="github-section">
+            <div class="section-header">
+                <h3>GitHub</h3>
+                <div class="section-controls">
+                    <button id="github-toggle-btn" class="toggle-btn" title="Toggle section">▼</button>
+                </div>
+            </div>
+            <div id="github-content" class="section-content">
+                <!-- GitHub content will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Jira Section -->
+        <div class="service-section" id="jira-section">
+            <div class="section-header">
+                <h3>Jira</h3>
+                <div class="section-controls">
+                    <button id="jira-toggle-btn" class="toggle-btn" title="Toggle section">▼</button>
+                </div>
+            </div>
+            <div id="jira-content" class="section-content">
+                <!-- Jira content will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div id="status-bar">
+            <a href="#" class="status-icon" id="links-status" title="Configure Links">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287l-1.372 1.372a3 3 0 1 0 4.243 4.243L8.58 10.9a3 3 0 0 0 .92-2.113 3 3 0 0 0-.92-2.092L7.414 5.535l.708-.707a4 4 0 0 1 0 5.657l-1.828 1.829A4 4 0 0 1 0 10.071V9.414a5 5 0 0 0 1.464 3.535L2.336 14.12a5 5 0 0 0 7.071 0l.708-.707a5 5 0 0 0 0-7.071l-.708-.707a5 5 0 0 0-3.536-1.464h-.657v.657a4 4 0 0 1-1.172 2.828l-.708.707zm-9-2.828 3.535-3.535a3 3 0 0 1 4.243 0l.707.708-1.414 1.414-.707-.707a1 1 0 0 0-1.414 0L.172 2.828 1.586 1.414z"/>
+                    <path d="m10.121 12.596-3.535 3.536a3 3 0 0 1-4.243 0l-.707-.708 1.414-1.414.707.707a1 1 0 0 0 1.414 0l3.535-3.535-1.414-1.414z"/>
+                </svg>
+                <div class="status-tooltip">
+                    <div class="tooltip-item">
+                        <strong>Links:</strong>
+                        <span id="links-count">0</span>
+                    </div>
+                    <button class="tooltip-config" id="links-config">Configure links</button>
+                </div>
+            </a>
+            <a href="#" class="status-icon" id="github-status" title="Configure GitHub">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+                <div class="status-tooltip">
+                    <div class="tooltip-item">
+                        <strong>User:</strong>
+                        <span id="github-username">Not configured</span>
+                    </div>
+                    <div class="tooltip-item">
+                        <strong>Token:</strong>
+                        <span id="github-token">••••</span>
+                    </div>
+                    <button class="tooltip-clear" id="github-clear">Clear credentials</button>
+                </div>
+            </a>
+            <a href="#" class="status-icon" id="jira-status" title="Configure Jira">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15.808 7.552L8.69.667 8 0 2.642 5.183l-2.45 2.37A.623.623 0 000 8c0 .168.069.329.192.447l4.895 4.73L8 16l5.358-5.183 2.45-2.37a.623.623 0 00.192-.447.623.623 0 00-.192-.448zM8 10.365L5.554 8 8 5.635 10.446 8 8 10.365z"/>
+                    <path d="M8 5.635c-1.26-1.22-1.26-3.197 0-4.417L3.554 5.183 5.554 8 8 5.635z" fill-opacity="0.3"/>
+                    <path d="M10.446 8l-2.446 2.365c1.26 1.22 1.26 3.197 0 4.417l4.446-3.965L10.446 8z" fill-opacity="0.3"/>
+                </svg>
+                <div class="status-tooltip">
+                    <div class="tooltip-item">
+                        <strong>User:</strong>
+                        <span id="jira-username">Not configured</span>
+                    </div>
+                    <div class="tooltip-item">
+                        <strong>Token:</strong>
+                        <span id="jira-token">••••</span>
+                    </div>
+                    <button class="tooltip-clear" id="jira-clear">Clear credentials</button>
+                </div>
+            </a>
+            <span id="cache-timer" title="Click to refresh"></span>
+            <a href="#" class="status-icon" id="theme-status" title="Change Theme">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+                </svg>
+                <div class="status-tooltip theme-selector-tooltip">
+                    <div class="theme-options">
+                        <button class="theme-option" data-theme="dark" title="Dark Theme">
+                            <div class="theme-preview dark-preview"></div>
+                            <span>Dark</span>
+                        </button>
+                        <button class="theme-option" data-theme="ocean" title="Ocean Theme">
+                            <div class="theme-preview ocean-preview"></div>
+                            <span>Ocean</span>
+                        </button>
+                        <button class="theme-option" data-theme="twilight" title="Twilight Theme">
+                            <div class="theme-preview twilight-preview"></div>
+                            <span>Twilight</span>
+                        </button>
+                        <button class="theme-option" data-theme="light" title="Light Theme">
+                            <div class="theme-preview light-preview"></div>
+                            <span>Light</span>
+                        </button>
+                        <button class="theme-option" data-theme="sunset" title="Sunset Theme">
+                            <div class="theme-preview sunset-preview"></div>
+                            <span>Sunset</span>
+                        </button>
+                        <button class="theme-option" data-theme="cyberpunk" title="Cyberpunk Theme">
+                            <div class="theme-preview cyberpunk-preview"></div>
+                            <span>Cyberpunk</span>
+                        </button>
+                        <button class="theme-option" data-theme="sunrise" title="Sunrise Theme">
+                            <div class="theme-preview sunrise-preview"></div>
+                            <span>Sunrise</span>
+                        </button>
+                        <button class="theme-option" data-theme="windbreaker" title="90s Windbreaker Theme">
+                            <div class="theme-preview windbreaker-preview"></div>
+                            <span>90s Windbreaker</span>
+                        </button>
+                        <button class="theme-option" data-theme="pastels" title="Ice Cream Pastels Theme">
+                            <div class="theme-preview pastels-preview"></div>
+                            <span>Ice Cream Pastels</span>
+                        </button>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Configuration Modal -->
+    <div id="config-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Configuration</h2>
+            <div id="config-content"></div>
+        </div>
+    </div>
+
+    <!-- Load the bridge as a module to connect ES modules with traditional scripts -->
+    <script type="module" src="js/bridge.js"></script>
+</body>
+</html>
