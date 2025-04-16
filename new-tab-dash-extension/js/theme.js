@@ -1,8 +1,13 @@
 // Theme management
 export async function initTheme() {
-  // Get initial theme from localStorage
+  // Get initial theme from localStorage, default to dark
   const savedTheme = localStorage.getItem('theme') || 'dark';
-  document.body.className = `theme-${savedTheme}`;
+  
+  // If the saved theme is not one of our new themes, default to dark
+  const validTheme = ['dark', 'light'].includes(savedTheme) ? savedTheme : 'dark';
+  
+  // Set the theme
+  document.body.className = `theme-${validTheme}`;
   
   // Set up theme selector in status bar
   const themeStatus = document.getElementById('theme-status');
@@ -16,7 +21,7 @@ export async function initTheme() {
     const theme = option.dataset.theme;
     
     // Set active state for current theme
-    if (theme === savedTheme) {
+    if (theme === validTheme) {
       option.classList.add('active');
     }
     
