@@ -1121,7 +1121,7 @@ input {
 
 .theme-options {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 
@@ -1165,6 +1165,10 @@ input {
   background-color: #f5f7fa;
 }
 
+.system-preview {
+  background: linear-gradient(to right, #121212 0%, #121212 50%, #f5f7fa 50%, #f5f7fa 100%);
+}
+
 .theme-preview::after {
   content: "";
   position: absolute;
@@ -1181,4 +1185,8 @@ input {
 
 .light-preview::after {
   background-color: #0066cc;
+}
+
+.system-preview::after {
+  background: linear-gradient(to right, #4a90e2 0%, #4a90e2 50%, #0066cc 50%, #0066cc 100%);
 }
