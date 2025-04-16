@@ -1039,6 +1039,10 @@ input {
   transition: all 0.2s ease;
   text-transform: uppercase;
   margin-bottom: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  z-index: 1;
+  position: relative;
 }
 
 .link-item:hover .link-text-fallback {

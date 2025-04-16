@@ -104,7 +104,6 @@ function renderLinks(links) {
     linkItem.href = link.url;
     linkItem.className = 'link-item';
     linkItem.title = link.title;
-    linkItem.target = '_blank';
     linkItem.rel = "noopener noreferrer";
     
     // Create the link name element (outside the link-item)
@@ -150,6 +149,9 @@ function tryFaviconApproaches(linkItem, hostname, url, title) {
   favicon.height = 32;
   favicon.loading = "lazy";
   favicon.style.backgroundColor = "transparent";
+
+  // Flag to track if we've created a fallback
+  let fallbackCreated = false;
   
   // Setup fallback chain - prioritize direct website sources first
   let currentAttempt = 0;
@@ -197,14 +199,22 @@ function tryFaviconApproaches(linkItem, hostname, url, title) {
     
     // Add a backup timeout in case none of the approaches work within a reasonable time
     setTimeout(() => {
-      if (favicon.naturalWidth === 0 || !favicon.complete) {
+      if ((favicon.naturalWidth === 0 || !favicon.complete) && !fallbackCreated) {
         console.log(`Favicon timeout for ${hostname}, using text fallback`);
-        if (favicon.parentNode) {
-          favicon.parentNode.removeChild(favicon);
-        }
-        createTextFallback(linkItem, title);
+        createFallback();
       }
     }, 3000); // 3 second timeout
+  }
+  
+  // Helper function to create fallback and prevent duplicate fallbacks
+  function createFallback() {
+    if (fallbackCreated) return;
+    fallbackCreated = true;
+    
+    if (favicon.parentNode) {
+      favicon.parentNode.removeChild(favicon);
+    }
+    createTextFallback(linkItem, title);
   }
   
   // Function to try next favicon source
@@ -216,15 +226,16 @@ function tryFaviconApproaches(linkItem, hostname, url, title) {
     } else {
       console.log(`All favicon sources failed for ${hostname}, using text fallback`);
       // All sources failed, remove the image and create text fallback
-      if (favicon.parentNode) {
-        favicon.parentNode.removeChild(favicon);
-      }
-      createTextFallback(linkItem, title);
+      createFallback();
     }
   };
   
   // Set up error handler for favicon
-  favicon.onerror = tryNextSource;
+  favicon.onerror = () => {
+    if (!fallbackCreated) {
+      tryNextSource();
+    }
+  };
   
   // Set up load handler
   favicon.onload = () => {
@@ -293,6 +304,9 @@ function getBestIconFromManifest(manifest, url, hostname) {
  * Create text fallback for when favicon can't be loaded
  */
 function createTextFallback(linkItem, title) {
+  // Clear any existing content in the link item
+  linkItem.innerHTML = '';
+  
   const fallback = document.createElement('div');
   fallback.className = 'link-text-fallback';
   
@@ -300,9 +314,37 @@ function createTextFallback(linkItem, title) {
   const firstChar = title && title.length > 0 ? title.charAt(0).toUpperCase() : 'L';
   fallback.textContent = firstChar;
   
-  // Clear any existing content in the link item
-  linkItem.innerHTML = '';
+  // Generate a consistent color based on the title
+  // This ensures the same site always gets the same color
+  const backgroundColor = generateColorFromText(title || 'Link');
+  fallback.style.backgroundColor = backgroundColor;
+  
+  // Append to link item
   linkItem.appendChild(fallback);
+}
+
+/**
+ * Generate a consistent color from text
+ * @param {string} text - The text to generate a color from
+ * @returns {string} - A CSS color string
+ */
+function generateColorFromText(text) {
+  // Create a simple hash from the text
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = text.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  // Convert to a vibrant HSL color
+  // Use hue rotation for distinct colors
+  const hue = Math.abs(hash % 360);
+  
+  // Use higher saturation and lightness for more vibrant colors
+  // but ensure lightness isn't too light for white text
+  const saturation = 65 + (hash % 20);
+  const lightness = 40 + (hash % 15); // Keep it in a range good for white text
+  
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 /**
