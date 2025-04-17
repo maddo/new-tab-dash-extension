@@ -8,6 +8,10 @@ const CACHE_CONFIG = {
     prefix: 'jira_cache_',
     duration: 5 * 60 * 1000, // 5 minutes in milliseconds
   },
+  favicon: {
+    prefix: 'favicon_cache_',
+    duration: 365 * 24 * 60 * 60 * 1000, // 1 year in milliseconds (essentially indefinite)
+  }
 };
 
 // Generate a cache key for a given endpoint and service
@@ -194,11 +198,16 @@ export const clearServiceCache = (service = 'github') => {
   updateCacheTimer();
 };
 
-// Clear all cached data
+// Clear all cached data (except favicons)
 export const clearAllCache = () => {
   clearServiceCache('github');
   clearServiceCache('jira');
   updateCacheTimer();
+};
+
+// Clear favicon cache (separate function to maintain favicon persistence)
+export const clearFaviconCache = () => {
+  clearServiceCache('favicon');
 };
 
 // Get cache status for display
@@ -277,4 +286,146 @@ export const fetchWithCache = async (url, options = {}, service = 'github') => {
     updateCacheTimer();
     throw error;
   }
-}; 
+};
+
+// Favicon Caching Functions
+// Get a cached favicon URL if it exists
+export const getCachedFavicon = (hostname) => {
+  const cacheKey = `${CACHE_CONFIG.favicon.prefix}${hostname}`;
+  const cachedData = localStorage.getItem(cacheKey);
+  
+  if (!cachedData) return null;
+  
+  try {
+    const { data } = JSON.parse(cachedData);
+    return data;
+  } catch (e) {
+    console.error('Favicon cache parse error:', e);
+    localStorage.removeItem(cacheKey);
+    return null;
+  }
+};
+
+// Cache a successful favicon URL
+export const cacheFavicon = (hostname, faviconUrl) => {
+  if (!hostname || !faviconUrl) return;
+  
+  const cacheKey = `${CACHE_CONFIG.favicon.prefix}${hostname}`;
+  const cacheData = {
+    timestamp: Date.now(),
+    data: faviconUrl,
+    service: 'favicon'
+  };
+  
+  try {
+    localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+  } catch (e) {
+    console.error('Favicon cache storage error:', e);
+    // If storage fails, try clearing old favicon caches
+    clearOldFaviconCaches();
+    // Try again
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify(cacheData));
+    } catch (e) {
+      console.error('Favicon cache storage retry error:', e);
+    }
+  }
+};
+
+// Clear old favicon caches if storage is getting full
+function clearOldFaviconCaches() {
+  const prefix = CACHE_CONFIG.favicon.prefix;
+  const faviconCacheKeys = Object.keys(localStorage).filter(key => key.startsWith(prefix));
+  
+  // If there are more than 100 favicons cached, remove the oldest 50
+  if (faviconCacheKeys.length > 100) {
+    const sortedKeys = faviconCacheKeys
+      .map(key => {
+        try {
+          const { timestamp } = JSON.parse(localStorage.getItem(key));
+          return { key, timestamp };
+        } catch (e) {
+          return { key, timestamp: 0 };
+        }
+      })
+      .sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Remove the oldest 50 keys
+    for (const item of sortedKeys.slice(0, 50)) {
+      localStorage.removeItem(item.key);
+    }
+  }
+}
+
+// Generate a favicon from the letters of a name and save it to the cache
+export const generateLetterFavicon = (hostname, name) => {
+  if (!hostname || !name) return null;
+  
+  // Create a canvas to generate the favicon
+  const canvas = document.createElement('canvas');
+  const size = 64; // Use a size that works well for favicons
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  
+  // Get up to 2 characters from the name (first letter of first and last word)
+  let letters = '';
+  const words = name.trim().split(/\s+/);
+  if (words.length >= 2) {
+    // First letter of first word and first letter of last word
+    letters = (words[0].charAt(0) + words[words.length - 1].charAt(0)).toUpperCase();
+  } else if (words.length === 1) {
+    // If only one word, use first letter, or first two letters if word is long enough
+    letters = words[0].length > 1 ? 
+              (words[0].charAt(0) + words[0].charAt(1)).toUpperCase() : 
+              words[0].charAt(0).toUpperCase();
+  } else {
+    // Fallback
+    letters = 'L';
+  }
+  
+  // Limit to 2 characters
+  if (letters.length > 2) {
+    letters = letters.substring(0, 2);
+  }
+  
+  // Generate a background color based on the name
+  const backgroundColor = generateColorFromText(name);
+  
+  // Draw a circle with the background color
+  ctx.fillStyle = backgroundColor;
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Draw the text
+  ctx.fillStyle = '#FFFFFF'; // White text
+  ctx.font = `bold ${size/2}px Arial, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(letters, size/2, size/2);
+  
+  // Convert canvas to data URL
+  const dataUrl = canvas.toDataURL('image/png');
+  
+  // Cache the data URL
+  cacheFavicon(hostname, dataUrl);
+  
+  return dataUrl;
+};
+
+// Helper function to generate color (reusing from links.js)
+function generateColorFromText(text) {
+  // Create a simple hash from the text
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = text.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  // Convert to a vibrant HSL color
+  const hue = Math.abs(hash % 360);
+  const saturation = 65 + (hash % 20);
+  const lightness = 40 + (hash % 15); // Keep it in a range good for white text
+  
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+} 

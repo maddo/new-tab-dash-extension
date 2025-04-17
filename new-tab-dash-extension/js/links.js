@@ -2,6 +2,8 @@
  * Links module for managing bookmarked links with favicons
  */
 
+import { getCachedFavicon, cacheFavicon, generateLetterFavicon } from './utils/cache.js';
+
 // Default links for initial setup
 const DEFAULT_LINKS = [
   { title: 'Google', url: 'https://www.google.com' },
@@ -173,6 +175,42 @@ function tryFaviconApproaches(linkItem, hostname, url, title) {
     `https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://${hostname}&size=32`
   ];
   
+  // First check if we have a cached favicon
+  const cachedFavicon = getCachedFavicon(hostname);
+  if (cachedFavicon) {
+    console.log(`Using cached favicon for ${hostname}: ${cachedFavicon}`);
+    // Create a function to start with the cached favicon
+    const useCachedFavicon = () => {
+      // Add to DOM first
+      linkItem.appendChild(favicon);
+      
+      // Set the source to the cached favicon
+      favicon.src = cachedFavicon;
+      
+      // Set up error handler to fall back to normal chain if cached favicon fails
+      favicon.onerror = () => {
+        console.log(`Cached favicon failed for ${hostname}, trying standard sources`);
+        // Start the regular chain
+        startTryingSources();
+      };
+      
+      // Set up load handler to verify the image actually loaded with content
+      favicon.onload = () => {
+        if (favicon.naturalWidth <= 1 || favicon.naturalHeight <= 1) {
+          console.log(`Cached favicon loaded but appears empty for ${hostname}, trying standard sources`);
+          startTryingSources();
+          return;
+        }
+        
+        console.log(`Cached favicon loaded successfully for ${hostname} with size ${favicon.naturalWidth}x${favicon.naturalHeight}`);
+      };
+    };
+    
+    // Use the cached favicon
+    useCachedFavicon();
+    return;
+  }
+  
   // Try to find manifest file first - this often has the best icons
   tryGetManifestIcon(url, hostname)
     .then(manifestIconUrl => {
@@ -247,6 +285,8 @@ function tryFaviconApproaches(linkItem, hostname, url, title) {
     }
     
     console.log(`Favicon loaded successfully for ${hostname} (attempt ${currentAttempt}) with size ${favicon.naturalWidth}x${favicon.naturalHeight}`);
+    // Cache this successful favicon URL
+    cacheFavicon(hostname, favicon.src);
     // Reset the error handler to prevent further attempts if image disappears later
     favicon.onerror = null;
   };
@@ -380,13 +420,36 @@ function showLinksConfigModal() {
     <h3>Configure Quick Links</h3>
     <div class="links-form">
       <div id="links-list">
-        ${links.map((link, index) => `
-          <div class="link-form-item" data-index="${index}">
-            <input type="text" class="link-title" placeholder="Title" value="${link.title}">
-            <input type="url" class="link-url" placeholder="URL" value="${link.url}">
-            <button class="remove-link-btn" title="Remove link">×</button>
-          </div>
-        `).join('')}
+        ${links.map((link, index) => {
+          // Get hostname for favicon
+          let faviconPreview = '';
+          let hostname = '';
+          try {
+            const url = new URL(link.url);
+            hostname = url.hostname;
+            // Check if there's a cached favicon
+            const cachedFavicon = getCachedFavicon(hostname);
+            if (cachedFavicon) {
+              faviconPreview = `
+                <div class="favicon-preview">
+                  <img src="${cachedFavicon}" alt="${link.title}" width="16" height="16">
+                  <button class="clear-favicon-btn" data-hostname="${hostname}" title="Clear cached favicon">×</button>
+                </div>`;
+            }
+          } catch (e) {
+            // Invalid URL, ignore
+          }
+          
+          return `
+            <div class="link-form-item" data-index="${index}">
+              ${faviconPreview}
+              <input type="text" class="link-title" placeholder="Title" value="${link.title}">
+              <input type="url" class="link-url" placeholder="URL" value="${link.url}">
+              <button class="generate-letter-favicon-btn" title="Generate letter favicon">Aa</button>
+              <button class="remove-link-btn" title="Remove link">×</button>
+            </div>
+          `;
+        }).join('')}
       </div>
       <button id="add-link-btn" class="save-button">Add New Link</button>
       <div class="form-actions">
@@ -419,6 +482,7 @@ function setupModalListeners() {
       newItem.innerHTML = `
         <input type="text" class="link-title" placeholder="Title" value="">
         <input type="url" class="link-url" placeholder="URL" value="">
+        <button class="generate-letter-favicon-btn" title="Generate letter favicon">Aa</button>
         <button class="remove-link-btn" title="Remove link">×</button>
       `;
       
@@ -428,10 +492,158 @@ function setupModalListeners() {
       const removeBtn = newItem.querySelector('.remove-link-btn');
       if (removeBtn) {
         removeBtn.addEventListener('click', (e) => {
-          e.target.closest('.link-form-item').remove();
+          if (confirm('Are you sure you want to remove this link?')) {
+            e.target.closest('.link-form-item').remove();
+          }
+        });
+      }
+      
+      // Add event listener to the generate letter favicon button
+      const generateBtn = newItem.querySelector('.generate-letter-favicon-btn');
+      if (generateBtn) {
+        generateBtn.addEventListener('click', (e) => {
+          const linkItem = e.target.closest('.link-form-item');
+          const titleInput = linkItem.querySelector('.link-title');
+          const urlInput = linkItem.querySelector('.link-url');
+          
+          if (titleInput && urlInput && titleInput.value.trim() && urlInput.value.trim()) {
+            try {
+              const urlObj = new URL(urlInput.value.trim());
+              const hostname = urlObj.hostname;
+              const title = titleInput.value.trim();
+              
+              // Generate and cache the letter favicon
+              const letterFavicon = generateLetterFavicon(hostname, title);
+              
+              // First remove any existing favicon preview
+              const existingPreview = linkItem.querySelector('.favicon-preview');
+              if (existingPreview) {
+                existingPreview.remove();
+              }
+              
+              // Create favicon preview element
+              const faviconPreview = document.createElement('div');
+              faviconPreview.className = 'favicon-preview';
+              faviconPreview.innerHTML = `
+                <img src="${letterFavicon}" alt="${title}" width="16" height="16">
+                <button class="clear-favicon-btn" data-hostname="${hostname}" title="Clear cached favicon">×</button>
+              `;
+              
+              // Insert at the beginning of the form item
+              if (linkItem.firstChild) {
+                linkItem.insertBefore(faviconPreview, linkItem.firstChild);
+              } else {
+                linkItem.appendChild(faviconPreview);
+              }
+              
+              // Add clear favicon button listener
+              const clearBtn = faviconPreview.querySelector('.clear-favicon-btn');
+              if (clearBtn) {
+                clearBtn.addEventListener('click', (e) => {
+                  const hostname = e.target.dataset.hostname;
+                  if (hostname) {
+                    // Clear the favicon cache for this hostname
+                    const cacheKey = `favicon_cache_${hostname}`;
+                    localStorage.removeItem(cacheKey);
+                    
+                    // Remove the favicon preview from the UI
+                    const previewContainer = e.target.closest('.favicon-preview');
+                    if (previewContainer) {
+                      previewContainer.remove();
+                    }
+                  }
+                });
+              }
+            } catch (e) {
+              // Invalid URL, ignore
+              console.error('Invalid URL for letter favicon generation:', e);
+              alert('Please enter a valid URL and title');
+            }
+          } else {
+            alert('Please enter both a title and a valid URL');
+          }
+        });
+      }
+      
+      // Add event listener to the URL input to check for cached favicons
+      const urlInput = newItem.querySelector('.link-url');
+      if (urlInput) {
+        urlInput.addEventListener('change', (e) => {
+          checkForCachedFavicon(e.target);
         });
       }
     });
+  }
+  
+  // Add URL change listeners to existing URL inputs
+  const urlInputs = document.querySelectorAll('.link-url');
+  for (const input of urlInputs) {
+    input.addEventListener('change', (e) => {
+      checkForCachedFavicon(e.target);
+    });
+  }
+  
+  // Function to check for cached favicon when URL changes
+  function checkForCachedFavicon(urlInput) {
+    const url = urlInput.value.trim();
+    if (!url) return;
+    
+    try {
+      const urlObj = new URL(url);
+      const hostname = urlObj.hostname;
+      const linkItem = urlInput.closest('.link-form-item');
+      
+      // First remove any existing favicon preview
+      const existingPreview = linkItem.querySelector('.favicon-preview');
+      if (existingPreview) {
+        existingPreview.remove();
+      }
+      
+      // Check if there's a cached favicon
+      const cachedFavicon = getCachedFavicon(hostname);
+      if (cachedFavicon) {
+        // Get the title for alt text
+        const titleInput = linkItem.querySelector('.link-title');
+        const title = titleInput ? titleInput.value : 'Link';
+        
+        // Create favicon preview element
+        const faviconPreview = document.createElement('div');
+        faviconPreview.className = 'favicon-preview';
+        faviconPreview.innerHTML = `
+          <img src="${cachedFavicon}" alt="${title}" width="16" height="16">
+          <button class="clear-favicon-btn" data-hostname="${hostname}" title="Clear cached favicon">×</button>
+        `;
+        
+        // Insert at the beginning of the form item
+        if (linkItem.firstChild) {
+          linkItem.insertBefore(faviconPreview, linkItem.firstChild);
+        } else {
+          linkItem.appendChild(faviconPreview);
+        }
+        
+        // Add clear favicon button listener
+        const clearBtn = faviconPreview.querySelector('.clear-favicon-btn');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', (e) => {
+            const hostname = e.target.dataset.hostname;
+            if (hostname) {
+              // Clear the favicon cache for this hostname
+              const cacheKey = `favicon_cache_${hostname}`;
+              localStorage.removeItem(cacheKey);
+              
+              // Remove the favicon preview from the UI
+              const previewContainer = e.target.closest('.favicon-preview');
+              if (previewContainer) {
+                previewContainer.remove();
+              }
+            }
+          });
+        }
+      }
+    } catch (e) {
+      // Invalid URL, ignore
+      console.error('Invalid URL for favicon check:', e);
+    }
   }
   
   // Save links button
@@ -475,7 +687,95 @@ function setupModalListeners() {
   const removeButtons = document.querySelectorAll('.remove-link-btn');
   for (const btn of removeButtons) {
     btn.addEventListener('click', (e) => {
-      e.target.closest('.link-form-item').remove();
+      if (confirm('Are you sure you want to remove this link?')) {
+        e.target.closest('.link-form-item').remove();
+      }
+    });
+  }
+  
+  // Clear favicon cache buttons
+  const clearFaviconButtons = document.querySelectorAll('.clear-favicon-btn');
+  for (const btn of clearFaviconButtons) {
+    btn.addEventListener('click', (e) => {
+      const hostname = e.target.dataset.hostname;
+      if (hostname) {
+        // Clear the favicon cache for this hostname
+        const cacheKey = `favicon_cache_${hostname}`;
+        localStorage.removeItem(cacheKey);
+        
+        // Remove the favicon preview from the UI
+        const previewContainer = e.target.closest('.favicon-preview');
+        if (previewContainer) {
+          previewContainer.remove();
+        }
+      }
+    });
+  }
+  
+  // Add event listeners to the generate letter favicon buttons for existing items
+  const generateButtons = document.querySelectorAll('.generate-letter-favicon-btn');
+  for (const btn of generateButtons) {
+    btn.addEventListener('click', (e) => {
+      const linkItem = e.target.closest('.link-form-item');
+      const titleInput = linkItem.querySelector('.link-title');
+      const urlInput = linkItem.querySelector('.link-url');
+      
+      if (titleInput && urlInput && titleInput.value.trim() && urlInput.value.trim()) {
+        try {
+          const urlObj = new URL(urlInput.value.trim());
+          const hostname = urlObj.hostname;
+          const title = titleInput.value.trim();
+          
+          // Generate and cache the letter favicon
+          const letterFavicon = generateLetterFavicon(hostname, title);
+          
+          // First remove any existing favicon preview
+          const existingPreview = linkItem.querySelector('.favicon-preview');
+          if (existingPreview) {
+            existingPreview.remove();
+          }
+          
+          // Create favicon preview element
+          const faviconPreview = document.createElement('div');
+          faviconPreview.className = 'favicon-preview';
+          faviconPreview.innerHTML = `
+            <img src="${letterFavicon}" alt="${title}" width="16" height="16">
+            <button class="clear-favicon-btn" data-hostname="${hostname}" title="Clear cached favicon">×</button>
+          `;
+          
+          // Insert at the beginning of the form item
+          if (linkItem.firstChild) {
+            linkItem.insertBefore(faviconPreview, linkItem.firstChild);
+          } else {
+            linkItem.appendChild(faviconPreview);
+          }
+          
+          // Add clear favicon button listener
+          const clearBtn = faviconPreview.querySelector('.clear-favicon-btn');
+          if (clearBtn) {
+            clearBtn.addEventListener('click', (e) => {
+              const hostname = e.target.dataset.hostname;
+              if (hostname) {
+                // Clear the favicon cache for this hostname
+                const cacheKey = `favicon_cache_${hostname}`;
+                localStorage.removeItem(cacheKey);
+                
+                // Remove the favicon preview from the UI
+                const previewContainer = e.target.closest('.favicon-preview');
+                if (previewContainer) {
+                  previewContainer.remove();
+                }
+              }
+            });
+          }
+        } catch (e) {
+          // Invalid URL, ignore
+          console.error('Invalid URL for letter favicon generation:', e);
+          alert('Please enter a valid URL and title');
+        }
+      } else {
+        alert('Please enter both a title and a valid URL');
+      }
     });
   }
 } 

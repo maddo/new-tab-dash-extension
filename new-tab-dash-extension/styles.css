@@ -1012,6 +1012,50 @@ input {
   min-width: 0;
 }
 
+.favicon-preview {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 4px;
+  position: relative;
+}
+
+.favicon-preview img {
+  border-radius: 4px;
+  object-fit: contain;
+  display: block;
+  background-color: transparent;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  background-image: linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%),
+                    linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%);
+  background-size: 4px 4px;
+  background-position: 0 0, 2px 2px;
+}
+
+.clear-favicon-btn {
+  background: none;
+  border: none;
+  color: var(--error-color);
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: var(--panel-bg);
+}
+
+.clear-favicon-btn:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
 .remove-link-btn {
   background: none;
   border: none;
@@ -1029,6 +1073,31 @@ input {
 
 .remove-link-btn:hover {
   background-color: rgba(255, 0, 0, 0.1);
+}
+
+.generate-letter-favicon-btn {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 24px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.generate-letter-favicon-btn:hover {
+  background-color: rgba(var(--accent-rgb), 0.1);
+  transform: translateY(-1px);
+}
+
+.generate-letter-favicon-btn:active {
+  transform: translateY(0);
 }
 
 .form-actions {
