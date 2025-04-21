@@ -111,7 +111,7 @@ function displayPRs(prData) {
   // Update header with count in parentheses
   const headerElement = document.querySelector('#github-section .section-header h3');
   if (headerElement) {
-    headerElement.textContent = 'GitHub (' + totalCount + ')';
+    headerElement.textContent = `GitHub (${totalCount})`;
   }
 
   // Handle no PRs
@@ -149,26 +149,33 @@ function displayPRs(prData) {
     <span class="gh-quicklink-count">${toReview.length}</span><span class="gh-quicklink-label">Reviews</span>
   </a>`;
   
-  html += `</div>`;
+  html += '</div>';
 
   // Owned PRs section (with link)
   if (owned.length > 0) {
-    const allPRsLink = `https://github.com/pulls?q=is%3Aopen+is%3Apr+user%3A${username}+OR+assignee%3A${username}+OR+review-requested%3A${username}`;
-    html += '<div class="pr-section"><h3><a href="' + allPRsLink + '" target="_blank">Your PRs (' + owned.length + ')</a></h3>';
-    html += owned.map(pr => {
-      const ageClass = pr.daysSinceCreated < 2 ? 'pr-age-new' : pr.daysSinceCreated < 7 ? 'pr-age-recent' : 'pr-age-old';
-      
-      return `
-        <div class="pr-item">
-          <div class="pr-title">
-            <span class="pr-repo">${pr.displayRepo}</span>
-            <a href="${pr.html_url}" target="_blank" class="pr-link">${pr.title}</a>
+    // Filter out PRs that user is also assigned to
+    const filteredOwned = owned.filter(ownedPR => 
+      !assigned.some(assignedPR => assignedPR.id === ownedPR.id)
+    );
+    
+    if (filteredOwned.length > 0) {
+      const allPRsLink = `https://github.com/pulls?q=is%3Aopen+is%3Apr+user%3A${username}+OR+assignee%3A${username}+OR+review-requested%3A${username}`;
+      html += `<div class="pr-section"><h3><a href="${allPRsLink}" target="_blank">Your PRs (${filteredOwned.length})</a></h3>`;
+      html += filteredOwned.map(pr => {
+        const ageClass = pr.daysSinceCreated < 2 ? 'pr-age-new' : pr.daysSinceCreated < 7 ? 'pr-age-recent' : 'pr-age-old';
+        
+        return `
+          <div class="pr-item">
+            <div class="pr-title">
+              <span class="pr-repo">${pr.displayRepo}</span>
+              <a href="${pr.html_url}" target="_blank" class="pr-link">${pr.title}</a>
+            </div>
+            <span class="pr-age ${ageClass}">${pr.daysSinceCreated}d</span>
           </div>
-          <span class="pr-age ${ageClass}">${pr.daysSinceCreated}d</span>
-        </div>
-      `;
-    }).join('');
-    html += '</div>';
+        `;
+      }).join('');
+      html += '</div>';
+    }
   }
 
   // Review PRs section - moving this up as it's more important
